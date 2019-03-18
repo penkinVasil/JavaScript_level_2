@@ -1,27 +1,17 @@
-function makeGETRequest(url, myPromise) {
+function makeGETRequest(url, callback) {
   const xhr = window.XMLHttpRequest 
-  ? new window.XMLHttpRequest(): new window.ActiveXObject();
+  ? new window.XMLHttpRequest(): new window.ActiveXObject('Microsoft.XMLHTTP');
 
-  
-    const myPromise = () => {
+  xhr.onreadystatechange = function () {
     return new Promise((resolve, reject) => {
-      if (xhr.readyState === 4) {
-        resolve(xhr.responseText);
-      } else {
-        reject('Error');
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        resolve(callback(xhr.responseText));
+        console.log("Запрос выполнен успешно!");
+      } else if (xhr.status !== 200 && xhr.status !== 0 ){ 
+        reject(xhr.status + " Error");
       }
     })   
-  
-}
-
-    const testFunk = async() => {
-    try {const res = await myPromise();
-    console.log(res);
-    } catch(err) {
-        console.error(err); 
-    }
-  }  
-testFunk(); 
+  }
 
   xhr.open('GET', url, true);
   xhr.send();
@@ -83,30 +73,26 @@ class GoodsBasket {
     this.basketItem = [];
     this.basketItemPrice = [];
     this.cartFull = [];
+    this.itemCount = 0;
   }
   // метод добавления товара в корзину  
   addGood(event) {
     const myGoods = list.goods;
     const idButton = event.target.id;
     const i = idButton - 1;
-      if (idButton == myGoods[i].id) {
-        const productTitle = myGoods[i].title;
-        const productPrice = myGoods[i].price;
-        this.cartFull.push(productTitle, productPrice); 
-        this.basketItemPrice.push(productPrice);
-        this.basketItem.push(productTitle); 
-      }
-    //console.log(this.cartFull);
-    console.log('Список товаров: ' + this.basketItem.join(', '));
-    myBasket.calcSum();  // вызов метода суммарной стоимости
+    if (idButton == myGoods[i].id) {
+        this.cartFull.push(myGoods[i].title, myGoods[i].price); 
+        this.basketItemPrice.push(myGoods[i].price);
+        this.basketItem.push(myGoods[i].title); 
+      }   
+    console.log('Список товаров: ' + this.basketItem.join(', ')); 
+    myBasket.calcSum();    
   }
-  //  метод, определяющий суммарную стоимость всех товаров 
   calcSum() {
     const totalSum = this.basketItemPrice.reduce((sum, current) => {
       return sum + current;
     });
-    console.log('Всего товаров в корзине: ' + this.basketItem.length);  
-    console.log('Общая стоимость: ' + totalSum);
+    console.log('Всего товаров в корзине: ' + this.basketItem.length + ' на сумму ' + totalSum);  
   } 
   //  метод появления кнопки Удалить после нажатия кнопки Добавить
   removeButton(event) {
@@ -120,15 +106,14 @@ class GoodsBasket {
   removeButtonHidden() {
    
   }
-  // метод удаления товара из корзины     (!!! НЕ ДОРАБОТАН)
+  // метод удаления товара из корзины    !!! не доработано
   remove(event) {
     const idButton = event.target.id;
     const i = idButton - 1;
-    
     this.basketItem.splice(i, 1);
-
+    this.basketItemPrice.splice(i, 1);
     console.log('Список товаров: ' +  this.basketItem.join(', '));
-    console.log('Всего товаров в корзине: ' + this.basketItem.length);   
+    myBasket.calcSum();
   }
 }
 const myBasket = new GoodsBasket();
