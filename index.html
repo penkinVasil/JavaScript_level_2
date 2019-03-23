@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>eShop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id = "app">
+    <!-- <input v-model='user' type="text">
+    <p v-if='user.length!=0'> Hello, {{upperCaseName}}</p>
+    <p v-else> Hello, guest</p>
+    <ul>
+      <li v-for='(name, index) in names' @click='clickHandler(name)'>
+        {{index}} - {{name}}
+      </li>
+    </ul> -->
+    <header>
+        <div class = "search">
+            <input type = "text" class = "goods-search">
+            <button class = "search-button" @click='filterGoods()'>Поиск</button>
+        </div>
+        <button class="cart-button" @click='showCart()'>Корзина</button>
+    </header>  
+    <main>
+      <div class="cartFrame">
+          <button class="cart-hidden" @click='hideCart()'>x</button>
+      </div>
+      <div class="goods-list">
+        <div class="goods-item" v-for="good in filteredGoods">
+          <h3>{{good.title}}</h3>
+          <p>{{good.price}}</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
